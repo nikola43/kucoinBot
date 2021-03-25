@@ -23,7 +23,7 @@ func main() {
 	buyQuantity := 0.0
 	orderId := ""
 	coinExist := false
-	coinName := "xlm"
+	coinName := "xym"
 	pairCoinName := "usdt"
 	selectedCoin := strings.ToUpper(coinName)
 	selectedPair := strings.ToUpper(pairCoinName)
