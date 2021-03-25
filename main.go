@@ -6,6 +6,7 @@ import (
 	"github.com/fatih/color"
 	"log"
 	"math"
+	"math/rand"
 	"strconv"
 
 	"strings"
@@ -19,6 +20,7 @@ func main() {
 	selectedSymbolBalance := 0.0
 	selectedPairBalance := 0.0
 	sellQuantity := 0.0
+	buyQuantity := 0.0
 	orderId := ""
 	coinExist := false
 	coinName := "xlm"
@@ -79,7 +81,10 @@ func main() {
 
 			// todo cambiar por precio compra initialBuyPrice
 			// todo comprar
-			orderResult := createMarketOrder(kucoinService, "buy", selectedSymbol, "10")
+			buyQuantity = math.Round((selectedPairBalance / initialPrice) - ((selectedPairBalance / initialPrice) * 2 / 100))
+
+
+			orderResult := createMarketOrder(kucoinService, "buy", selectedSymbol, parsePriceToString(buyQuantity))
 			orderId = orderResult.OrderId
 			fmt.Println(orderId)
 
@@ -192,8 +197,10 @@ func parsePriceToString(price float64) string {
 }
 
 func createMarketOrder(kucoinService *kucoin.ApiService, side, symbol, size string) *kucoin.CreateOrderResultModel {
+	oid := strconv.FormatInt(int64(rand.Intn(99999999)), 10)
+
 	order := &kucoin.CreateOrderModel{
-		ClientOid: "31573140",
+		ClientOid: oid,
 		Side:      side,
 		Symbol:    symbol,
 		Type:      "market",
@@ -219,9 +226,10 @@ func createMarketOrder(kucoinService *kucoin.ApiService, side, symbol, size stri
 
 func createTakeProfitOrder(kucoinService *kucoin.ApiService, symbol, size, stopPrice, price string) *kucoin.CreateOrderResultModel {
 	createOrderResultModel := &kucoin.CreateOrderResultModel{}
+	oid := strconv.FormatInt(int64(rand.Intn(99999999)), 10)
 
 	order := &kucoin.CreateOrderModel{
-		ClientOid: "31573140",
+		ClientOid: oid,
 		Side:      "sell",
 		Symbol:    symbol,
 		Stop:      "loss",
@@ -248,8 +256,10 @@ func createTakeProfitOrder(kucoinService *kucoin.ApiService, symbol, size, stopP
 
 func createBuyOrder(kucoinService *kucoin.ApiService, symbol string, size string, price string) *kucoin.CreateOrderResultModel {
 	createOrderResultModel := &kucoin.CreateOrderResultModel{}
+	oid := strconv.FormatInt(int64(rand.Intn(99999999)), 10)
+
 	order := &kucoin.CreateOrderModel{
-		ClientOid: "31573140",
+		ClientOid: oid,
 		Side:      "buy",
 		Symbol:    symbol,
 		Price:     price,
