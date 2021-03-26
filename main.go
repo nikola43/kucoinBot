@@ -23,7 +23,7 @@ func main() {
 	buyQuantity := 0.0
 	orderId := ""
 	coinExist := false
-	coinName := "xym"
+	coinName := "go"
 	pairCoinName := "usdt"
 	selectedCoin := strings.ToUpper(coinName)
 	selectedPair := strings.ToUpper(pairCoinName)
@@ -59,9 +59,18 @@ func main() {
 		return
 	}
 	//-------------------------------------------------------
+
+        fmt.Print("Enter text: ")
+        var input string
+        fmt.Scanln(&input)
+        selectedCoin = strings.ToUpper(input)               
+        selectedPair = strings.ToUpper(pairCoinName)
+        selectedSymbol = selectedCoin + "-" + selectedPair
+
+
 	selectedSymbolBalance = parsePriceToFloat(getBalanceByCoin(kucoinService, coinName))
 	selectedPairBalance = parsePriceToFloat(getBalanceByCoin(kucoinService, pairCoinName))
-	sellQuantity = math.Round(selectedSymbolBalance - (selectedSymbolBalance * 2 / 100)) // se vende un 2% menos para prevenir error
+	sellQuantity = math.Round(selectedSymbolBalance - (selectedSymbolBalance * 2 / 100))
 
 	fmt.Println("selectedSymbolBalance")
 	fmt.Println(selectedSymbolBalance)
@@ -82,16 +91,17 @@ func main() {
 			// todo cambiar por precio compra initialBuyPrice
 			// todo comprar
 			buyQuantity = math.Round((selectedPairBalance / initialPrice) - ((selectedPairBalance / initialPrice) * 2 / 100))
-
-
 			orderResult := createMarketOrder(kucoinService, "buy", selectedSymbol, parsePriceToString(buyQuantity))
 			orderId = orderResult.OrderId
 			fmt.Println(orderId)
 
-			order := getOrder(kucoinService, "605ce1347eda230006c5245a")
+			order := getOrder(kucoinService, orderId)
 			if order.IsActive == false {
 				tickerAfterBuy := getSymbolTicker(kucoinService, selectedSymbol)
 				initialBuyPrice = parsePriceToFloat(tickerAfterBuy.BestAsk)
+				selectedSymbolBalance = parsePriceToFloat(getBalanceByCoin(kucoinService, coinName))
+				sellQuantity = math.Round(selectedSymbolBalance - (selectedSymbolBalance * 2 / 100))
+
 			}
 
 		} else {
@@ -192,7 +202,7 @@ func parsePriceToFloat(price string) float64 {
 	return f
 }
 func parsePriceToString(price float64) string {
-	s := fmt.Sprintf("%f", price)
+	s := fmt.Sprintf("%.5f", price)
 	return s
 }
 
